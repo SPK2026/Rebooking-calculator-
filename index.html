@@ -1,122 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Airline Date Change & Fare Difference Calculator</title>
-  <style>
-    :root {
-      --primary: #0066cc;
-      --bg: #f4f7f9;
-      --card-bg: #ffffff;
-      --text: #333333;
-      --border: #e0e0e0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Reissue & Exchange Calculator</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #0f172a;
+            --input-border: #475569;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --terminal-bg: #030712;
+            --terminal-border: #1f2937;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
-    .calculator-card {
-      background: var(--card-bg);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 450px;
-    }
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
 
-    h2 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.4rem;
-      border-bottom: 2px solid var(--bg);
-      padding-bottom: 10px;
-    }
+        /* Header & Logo */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
 
-    .input-group {
-      margin-bottom: 15px;
-    }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-    }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            fill: var(--accent-color);
+        }
 
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      box-sizing: border-box;
-      font-size: 1rem;
-    }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
 
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
+        .header p {
+            margin: 3px 0 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-    button {
-      width: 100%;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.2s;
-    }
+        /* Forms and Layout */
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    button:hover {
-      background-color: #0052a3;
-    }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
 
-    .results {
-      margin-top: 25px;
-      background-color: var(--bg);
-      padding: 15px;
-      border-radius: 8px;
-    }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
 
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-    }
+        label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .result-row.total {
-      font-weight: bold;
-      font-size: 1.1rem;
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
-      margin-top: 10px;
-      color: var(--primary);
-    }
-  </style>
+        label svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 11px 14px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: none;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Passenger Card Section */
+        .passenger-card {
+            background-color: #111827;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .passenger-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .passenger-title svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-color);
+        }
+
+        .tax-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-add {
+            background-color: var(--success-color);
+            margin-top: 5px;
+        }
+
+        .btn-add:hover {
+            background-color: var(--success-hover);
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-muted);
+        }
+
+        /* Terminal Display / Result Box */
+        .result-box {
+            margin-top: 25px;
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--terminal-border);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: "Courier New", Courier, monospace;
+            color: #38edf8;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="calculator-card">
-    <h2>✈️ Date Change Calculator</h2>
+<div class="container">
+    <!-- Header with Airplane Logo -->
+    <div class="header">
+        <div class="logo-container">
+            <svg class="logo-icon" viewBox="0 0 24 24">
+                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+            </svg>
+            <div>
+                <h1>Ticket Exchange Calculator</h1>
+                <p>Flight Reissue Fare & Tax Calculation Desk</p>
+            </div>
+        </div>
+    </div>
 
-    <div class="input-group">
-      <label for="currency">Select Currency</label>
-      <select id="currency">
-        <option value="$">USD - US Dollar ($)</option>
-        <option value="€">EUR - Euro (€)</option>
-        <option value="£">GBP - British Pound
+    <!-- Passenger Selection Inputs -->
+    <div class="form-row">
+        <div class="form-group">
+            <label>
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Adults (12+ yrs)
+            </label>
+            <select id="adultCount" onchange="renderPassengers()">
+                <option value="0">0</option>
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Children (2-11 yrs)
+            </label>
+            <select id="childCount" onchange="renderPassengers()">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Infants (0-2 yrs)
+            </label>
+            <select id="infantCount" onchange="renderPassengers()">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Container where individual forms are generated -->
+    <div id="passengersContainer"></div>
+
+    <!-- Calculation Summary & Output -->
+    <div class="section-title">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Grand Summary
+    </div>
+    <div class="result-box" id="outputBox">Terminal Ready...</div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn" onclick="copyOutput()">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            Copy Summary
+        </button>
+        <button class="btn btn-danger" onclick="clearEverything()">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Clear Everything
+        </button>
+    </div>
+</div>
+
+<script>
+    // SVG icon constants
+    const userIconSVG = `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+    const tagIconSVG = `<svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>`;
+
+    // Render passenger cards
+    function renderPassengers() {
+        const adults = parseInt(document.getElementById('adultCount').value) || 0;
+        const children = parseInt(document.getElementById('childCount').value) || 0;
+        const infants = parseInt(document.getElementById('infantCount').value) || 0;
+
+        const container = document.getElementById('passengersContainer');
+        container.innerHTML = '';
+
+        let list = [];
+        for (let i = 1; i <= adults; i++) list.push({ type: 'Adult', index: i });
+        for (let i = 1; i <= children; i++) list.push({ type: 'Child', index: i });
+        for (let i = 1; i <= infants; i++) list.push({ type: 'Infant', index: i });
+
+        list.forEach((p, id) => {
+            const card = document.createElement('div');
+            card.className = 'passenger-card';
+            card.id = `p-card-${id}`;
+
+            card.innerHTML = `
+                <div class="passenger-title">${userIconSVG} ${p.type} ${p.index}</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select class="p-currency" onchange="calculateAll()">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="INR">INR (₹)</option>
+                            <option value="CAD">CAD ($)</option>
+                            <option value="AUD">AUD ($)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Command / Remarks</label>
+                        <input type="text" class="p-command" placeholder="Enter GDS command or notes..." oninput="calculateAll()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="p-flex" onchange="toggleFlex(${id})">
+                        Flexible Ticket Option?
+                    </label>
+                </div>
+
+                <div class="form-group hidden" id="penalty-container-${id}">
+                    <label>Airline Penalty</label>
+                    <input type="number" class="p-penalty" value="0" min="0" step="any" oninput="calculateAll()">
+                </div>
+
+                <div class="section-title">${tagIconSVG} Base Fare Details</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Old Base Fare</label>
+                        <input type="number" class="p-old-base" value="0" min="0" step="any" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>New Base Fare</label>
+                        <input type="number" class="p-new-base" value="0" min="0" step="any" oninput="calculateAll()">
+                    </div>
+                </div>
+
+                <div class="section-title">${tagIconSVG} Dynamic Taxes Breakdown</div>
+                <div id="taxes-container-${id}"></div>
+                <button class="btn btn-add" onclick="addTaxRow(${id})">
+                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Add Tax Item
+                </button>
+
+                <div class="section-title">${tagIconSVG} Extra Fees</div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="p-fee-check" onchange="toggleFee(${id})">
+                        Add Service Fee?
+                    </label>
+                </div>
+
+                <div class="form-group hidden" id="fee-container-${id}">
+                    <label>Our Service Fee Value</label>
+                    <input type="number" class="p-service-fee" value="0" min="0" step="any" oninput="calculateAll()">
+                </div>
+            `;
+
+            container.appendChild(card);
+            addTaxRow(id);
+        });
+
+        calculateAll();
+    }
+
+    // Toggle Flex Penalty visibility
+    function toggleFlex(id) {
+        const card = document.getElementById(`p-card-${id}`);
+        const flexCheck = card.querySelector('.p-flex').checked;
+        const penaltyContainer = document.getElementById(`penalty-container-${id}`);
+
+        if (flexCheck) {
+            penaltyContainer.classList.remove('hidden');
+        } else {
+            penaltyContainer.classList.add('hidden');
+            card.querySelector('.p-penalty').value = 0;
+        }
+        calculateAll();
+    }
+
+    // Toggle Service Fee visibility
+    function toggleFee(id) {
+        const card = document.getElementById(`p-card-${id}`);
+        const feeCheck = card.querySelector('.p-fee-check').checked;
+        const feeContainer = document.getElementById(`fee-container-${id}`);
+
+        if (feeCheck) {
+            feeContainer.classList.remove('hidden');
+        } else {
+            feeContainer.classList.add('hidden');
+            card.querySelector('.p-service-fee').value = 0;
+        }
+        calculateAll();
+    }
+
+    // Add dynamic tax field
+    function addTaxRow(id, name = '', oldVal = 0, newVal = 0) {
+        const container = document.getElementById(`taxes-container-${id}`);
+        const rowId = Date.now() + Math.random();
+        const row = document.createElement('div');
+        row.className = 'tax-row';
+        row.id = `tax-${rowId}`;
+
+        row.innerHTML = `
+            <input type="text" placeholder="Tax Name (e.g. YQ)" class="tax-name" value="${name}" oninput="calculateAll()">
+            <input type="number" placeholder="Old Tax" class="tax-old" value="${oldVal}" step="any" oninput="calculateAll()">
+            <input type="number" placeholder="New Tax" class="tax-new" value="${newVal}" step="any" oninput="calculateAll()">
+            <button class="btn btn-danger" onclick="removeTaxRow('${row.id}')">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        `;
+
+        container.appendChild(row);
+        calculateAll();
+    }
+
+    // Remove dynamic tax field
+    function removeTaxRow(rowId) {
+        const row = document.getElementById(rowId);
+        if (row) {
+            row.remove();
+            calculateAll();
+        }
+    }
+
+    // Run totals and form text calculations
+    function calculateAll() {
+        const cards = document.querySelectorAll('.passenger-card');
+        if (cards.length === 0) {
+            document.getElementById('outputBox').innerText = 'Please select at least 1 passenger above.';
+            return;
+        }
+
+        let categoryTotals = {
+            Adult: { count: 0, baseDiff: 0, taxDiff: 0, penalty: 0, fee: 0, total: 0, currency: 'USD' },
+            Child: { count: 0, baseDiff: 0, taxDiff: 0, penalty: 0, fee: 0, total: 0, currency: 'USD' },
+            Infant: { count: 0, baseDiff: 0, taxDiff: 0, penalty: 0, fee: 0, total: 0, currency: 'USD' }
+        };
+
+        let passengerBreakdowns = [];
+        let grandTotal = 0;
+        let globalCurrency = 'USD';
+
+        cards.forEach((card) => {
+            const title = card.querySelector('.passenger-title').innerText.trim();
+            const type = title.startsWith('Adult') ? 'Adult' : title.startsWith('Child') ? 'Child' : 'Infant';
+
+            const currency = card.querySelector('.p-currency').value;
+            globalCurrency = currency;
+            const command = card.querySelector('.p-command').value;
+            const isFlex = card.querySelector('.p-flex').checked;
+            const hasFee = card.querySelector('.p-fee-check').checked;
+
+            const oldBase = parseFloat(card.querySelector('.p-old-base').value) || 0;
+            const newBase = parseFloat(card.querySelector('.p-new-base').value) || 0;
+            const baseDiff = newBase - oldBase;
+
+            let totalOldTax = 0;
+            let totalNewTax = 0;
+            let taxDetails = [];
+
+            const taxNames = card.querySelectorAll('.tax-name');
+            const taxOlds = card.querySelectorAll('.tax-old');
+            const taxNews = card.querySelectorAll('.tax-new');
+
+            for (let i = 0; i < taxNames.length; i++) {
+                const name = taxNames[i].value || `Tax ${i + 1}`;
+                const oldT = parseFloat(taxOlds[i].value) || 0;
+                const newT = parseFloat(taxNews[i].value) || 0;
+                const diffT = newT - oldT;
+
+                totalOldTax += oldT;
+                totalNewTax += newT;
+
+                taxDetails.push(`    - ${name}: ${currency} ${diffT.toFixed(2)} (Old: ${oldT.toFixed(2)}, New: ${newT.toFixed(2)})`);
+            }
+
+            const taxDiff = totalNewTax - totalOldTax;
+            const penalty = isFlex ? (parseFloat(card.querySelector('.p-penalty').value) || 0) : 0;
+            const fee = hasFee ? (parseFloat(card.querySelector('.p-service-fee').value) || 0) : 0;
+            const paxTotal = baseDiff + taxDiff + penalty + fee;
+
+            categoryTotals[type].count += 1;
+            categoryTotals[type].baseDiff += baseDiff;
+            categoryTotals[type].taxDiff += taxDiff;
+            categoryTotals[type].penalty += penalty;
+            categoryTotals[type].fee += fee;
+            categoryTotals[type].total += paxTotal;
+            categoryTotals[type].currency = currency;
+
+            grandTotal += paxTotal;
+
+            let pStr = `[${title}]\n`;
+            if (command) pStr += `  Command/Remarks : ${command}\n`;
+            pStr += `  Base Fare Diff  : ${currency} ${baseDiff.toFixed(2)}\n`;
+            pStr += `  Taxes Diff      : ${currency} ${taxDiff.toFixed(2)}\n`;
+            if (taxDetails.length > 0) pStr += taxDetails.join('\n') + '\n';
+            if (isFlex) pStr += `  Airline Penalty : ${currency} ${penalty.toFixed(2)}\n`;
+            if (hasFee) pStr += `  Service Fee     : ${currency} ${fee.toFixed(2)}\n`;
+            pStr += `  Subtotal        : ${currency} ${paxTotal.toFixed(2)}\n`;
+
+            passengerBreakdowns.push(pStr);
+        });
+
+        // Summary Terminal Output
+        let output = `========================================\n`;
+        output += `      TICKET EXCHANGE SUMMARY           \n`;
+        output += `========================================\n\n`;
+
+        output += passengerBreakdowns.join('\n') + `\n`;
+        output += `----------------------------------------\n`;
+        output += `          CATEGORY GRAND TOTALS          \n`;
+        output += `----------------------------------------\n`;
+
+        ['Adult', 'Child', 'Infant'].forEach(cat => {
+            const data = categoryTotals[cat];
+            if (data.count > 0) {
+                output += `${cat.toUpperCase()}S TOTAL (${data.count}): ${data.currency} ${data.total.toFixed(2)}\n`;
+                output += `  - Base Fare Diff : ${data.currency} ${data.baseDiff.toFixed(2)}\n`;
+                output += `  - Taxes Diff     : ${data.currency} ${data.taxDiff.toFixed(2)}\n`;
+                if (data.penalty > 0) output += `  - Penalty        : ${data.currency} ${data.penalty.toFixed(2)}\n`;
+                if (data.fee > 0)     output += `  - Service Fee    : ${data.currency} ${data.fee.toFixed(2)}\n`;
+                output += `\n`;
+            }
+        });
+
+        output += `========================================\n`;
+        output += `OVERALL GRAND TOTAL: ${globalCurrency} ${grandTotal.toFixed(2)}\n`;
+        output += `========================================`;
+
+        document.getElementById('outputBox').innerText = output;
+    }
+
+    // Copy to clipboard
+    function copyOutput() {
+        const textToCopy = document.getElementById('outputBox').innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Summary copied to clipboard!');
+        }).catch(err => {
+            alert('Failed to copy text: ', err);
+        });
+    }
+
+    // Reset fields
+    function clearEverything() {
+        document.getElementById('adultCount').value = '1';
+        document.getElementById('childCount').value = '0';
+        document.getElementById('infantCount').value = '0';
+        renderPassengers();
+    }
+
+    window.onload = function() {
+        renderPassengers();
+    };
+</script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight Exchange & Reissue Calculator</title>
+    <title>Compact Ticket Exchange Calculator</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -29,111 +29,89 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 12px;
             display: flex;
             justify-content: center;
         }
 
         .container {
             width: 100%;
-            max-width: 950px;
+            max-width: 900px;
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
-        /* Header & Logo */
+        /* Compact Header */
         .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-        }
-
-        .logo-container {
-            display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .logo-icon {
-            width: 38px;
-            height: 38px;
-            fill: var(--accent-color);
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 1.5rem;
-            color: var(--text-main);
-            letter-spacing: -0.5px;
+            font-size: 1.15rem;
+            color: var(--accent-color);
         }
 
         .header p {
-            margin: 3px 0 0 0;
-            font-size: 0.85rem;
+            margin: 0;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
-        /* Forms & Cards */
+        /* Compact Form Controls */
         .global-card {
             background-color: #111827;
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
         }
 
         .form-row {
             display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
         }
 
-        .form-row .form-group {
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group {
             flex: 1;
             margin-bottom: 0;
         }
 
         label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: block;
             font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+            margin-bottom: 3px;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        label svg {
-            width: 16px;
-            height: 16px;
-            fill: var(--accent-color);
         }
 
         input[type="text"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 11px 14px;
+            padding: 6px 8px;
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
-            border-radius: 8px;
+            border-radius: 5px;
             color: var(--text-main);
             box-sizing: border-box;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         input[type="text"]:focus,
@@ -143,8 +121,8 @@
         }
 
         input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 15px;
+            height: 15px;
             cursor: pointer;
             accent-color: var(--primary-color);
         }
@@ -152,44 +130,61 @@
         .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             cursor: pointer;
             font-weight: 600;
             text-transform: none;
             color: var(--text-main);
-            font-size: 0.95rem;
+            font-size: 0.8rem;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Passenger Card Section */
+        /* Compact Passenger Cards */
         .passenger-card {
             background-color: #111827;
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 22px;
-            margin-bottom: 25px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
         }
 
         .passenger-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--accent-color);
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             border-bottom: 1px solid var(--card-border);
-            padding-bottom: 10px;
+            padding-bottom: 4px;
+        }
+
+        /* Taxes Layout with Headings */
+        .tax-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+            padding-right: 28px; /* space for delete button offset */
+        }
+
+        .tax-header span {
+            flex: 1;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
         }
 
         .tax-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+        }
+
+        .tax-row input {
+            flex: 1;
         }
 
         /* Buttons */
@@ -197,33 +192,23 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 11px 18px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: background-color 0.2s, transform 0.1s;
+            gap: 4px;
         }
 
         .btn:hover {
             background-color: var(--primary-hover);
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-        }
-
         .btn-danger {
             background-color: var(--danger-color);
+            padding: 6px 8px;
         }
 
         .btn-danger:hover {
@@ -232,83 +217,60 @@
 
         .btn-add {
             background-color: var(--success-color);
-            margin-top: 5px;
+            margin-top: 2px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
         }
 
         .btn-add:hover {
             background-color: var(--success-hover);
         }
 
-        .section-title {
-            font-size: 0.9rem;
+        .section-sub-title {
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             color: var(--text-muted);
-            margin: 20px 0 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-title svg {
-            width: 16px;
-            height: 16px;
-            fill: var(--text-muted);
+            margin: 8px 0 4px 0;
         }
 
         /* Terminal Display / Result Box */
         .result-box {
-            margin-top: 25px;
+            margin-top: 10px;
             background-color: var(--terminal-bg);
             border: 1px solid var(--terminal-border);
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 6px;
+            padding: 10px 12px;
             font-family: "Courier New", Courier, monospace;
             color: #38edf8;
             white-space: pre-wrap;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+            font-size: 0.82rem;
+            line-height: 1.35;
         }
 
         .action-buttons {
             display: flex;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 8px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Header with Airplane Logo -->
+    <!-- Compact Header -->
     <div class="header">
-        <div class="logo-container">
-            <svg class="logo-icon" viewBox="0 0 24 24">
-                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-            </svg>
-            <div>
-                <h1>Ticket Exchange Calculator</h1>
-                <p>Flight Reissue Fare & Tax Calculation Desk</p>
-            </div>
+        <div>
+            <h1>Ticket Exchange Calculator</h1>
+            <p>Flight Reissue Fare & Tax Calculation Desk</p>
         </div>
     </div>
 
-    <!-- Global Parameters Card -->
+    <!-- Global Parameters -->
     <div class="global-card">
-        <div class="section-title" style="margin-top: 0;">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            Global Calculation Settings
-        </div>
-
-        <!-- Passenger Count Selection -->
         <div class="form-row">
             <div class="form-group">
-                <label>
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Adults (12+ yrs)
-                </label>
+                <label>Adults</label>
                 <select id="adultCount" onchange="renderPassengers()">
                     <option value="0">0</option>
                     <option value="1" selected>1</option>
@@ -320,10 +282,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Children (2-11 yrs)
-                </label>
+                <label>Children</label>
                 <select id="childCount" onchange="renderPassengers()">
                     <option value="0" selected>0</option>
                     <option value="1">1</option>
@@ -335,20 +294,13 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Infants (0-2 yrs)
-                </label>
+                <label>Infants</label>
                 <select id="infantCount" onchange="renderPassengers()">
                     <option value="0" selected>0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                 </select>
             </div>
-        </div>
-
-        <!-- Currency and Command Options -->
-        <div class="form-row">
             <div class="form-group">
                 <label>Currency</label>
                 <select id="globalCurrency" onchange="calculateAll()">
@@ -360,69 +312,49 @@
                     <option value="AUD">AUD ($)</option>
                 </select>
             </div>
-            <div class="form-group">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
                 <label>Command / Remarks</label>
                 <input type="text" id="globalCommand" placeholder="Enter GDS command or notes..." oninput="calculateAll()">
             </div>
-        </div>
-
-        <!-- Checkboxes for Flexible Option & Service Fees -->
-        <div class="form-row">
-            <div class="form-group">
+            <div class="form-group" style="display:flex; align-items:flex-end; gap: 15px; padding-bottom: 2px;">
                 <label class="checkbox-label">
-                    <input type="checkbox" id="globalFlex" onchange="toggleFlex()">
-                    Flexible Ticket Option?
+                    <input type="checkbox" id="globalFlex" onchange="toggleFlex()"> Flexible Ticket?
                 </label>
-            </div>
-            <div class="form-group">
                 <label class="checkbox-label">
-                    <input type="checkbox" id="globalFeeCheck" onchange="toggleFee()">
-                    Add Service Fee?
+                    <input type="checkbox" id="globalFeeCheck" onchange="toggleFee()"> Service Fee?
                 </label>
             </div>
         </div>
 
-        <!-- Conditional Inputs -->
         <div class="form-row">
             <div class="form-group hidden" id="penaltyContainer">
                 <label>Airline Penalty (Per Pax)</label>
                 <input type="number" id="globalPenalty" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
             <div class="form-group hidden" id="feeContainer">
-                <label>Our Service Fee Value (Per Pax)</label>
+                <label>Service Fee Value (Per Pax)</label>
                 <input type="number" id="globalServiceFee" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
         </div>
     </div>
 
-    <!-- Dynamic Container where individual passenger fare details are entered -->
+    <!-- Dynamic Passenger Container -->
     <div id="passengersContainer"></div>
 
-    <!-- Calculation Summary & Output -->
-    <div class="section-title">
-        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        Grand Summary
-    </div>
+    <!-- Summary Display -->
     <div class="result-box" id="outputBox">Terminal Ready...</div>
 
-    <!-- Action Buttons -->
+    <!-- Actions -->
     <div class="action-buttons">
-        <button class="btn" onclick="copyOutput()">
-            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-            Copy Summary
-        </button>
-        <button class="btn btn-danger" onclick="clearEverything()">
-            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            Clear Everything
-        </button>
+        <button class="btn" onclick="copyOutput()">Copy Summary</button>
+        <button class="btn btn-danger" onclick="clearEverything()">Clear Everything</button>
     </div>
 </div>
 
 <script>
-    const userIconSVG = `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
-    const tagIconSVG = `<svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>`;
-
-    // Toggle Flex Penalty input
     function toggleFlex() {
         const isFlex = document.getElementById('globalFlex').checked;
         const penaltyContainer = document.getElementById('penaltyContainer');
@@ -435,7 +367,6 @@
         calculateAll();
     }
 
-    // Toggle Service Fee input
     function toggleFee() {
         const hasFee = document.getElementById('globalFeeCheck').checked;
         const feeContainer = document.getElementById('feeContainer');
@@ -448,7 +379,6 @@
         calculateAll();
     }
 
-    // Render individual passenger forms for base fares and taxes
     function renderPassengers() {
         const adults = parseInt(document.getElementById('adultCount').value) || 0;
         const children = parseInt(document.getElementById('childCount').value) || 0;
@@ -468,9 +398,9 @@
             card.id = `p-card-${id}`;
 
             card.innerHTML = `
-                <div class="passenger-title">${userIconSVG} ${p.type} ${p.index}</div>
+                <div class="passenger-title">${p.type} ${p.index}</div>
                 
-                <div class="section-title" style="margin-top:0;">${tagIconSVG} Base Fare Details</div>
+                <div class="section-sub-title">Base Fare Details</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Old Base Fare</label>
@@ -482,11 +412,15 @@
                     </div>
                 </div>
 
-                <div class="section-title">${tagIconSVG} Taxes Breakdown</div>
+                <div class="section-sub-title">Taxes Breakdown</div>
+                <!-- Tax Column Headers -->
+                <div class="tax-header">
+                    <span>Tax Name</span>
+                    <span>Old Tax</span>
+                    <span>New Tax</span>
+                </div>
                 <div id="taxes-container-${id}"></div>
-                <button class="btn btn-add" onclick="addTaxRow(${id})">
-                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Add Tax Item
-                </button>
+                <button class="btn btn-add" onclick="addTaxRow(${id})">+ Add Tax</button>
             `;
 
             container.appendChild(card);
@@ -496,7 +430,6 @@
         calculateAll();
     }
 
-    // Add a tax entry row
     function addTaxRow(id, name = '', oldVal = 0, newVal = 0) {
         const container = document.getElementById(`taxes-container-${id}`);
         const rowId = Date.now() + Math.random();
@@ -505,19 +438,16 @@
         row.id = `tax-${rowId}`;
 
         row.innerHTML = `
-            <input type="text" placeholder="Tax Name (e.g. YQ)" class="tax-name" value="${name}" oninput="calculateAll()">
-            <input type="number" placeholder="Old Tax" class="tax-old" value="${oldVal}" step="any" oninput="calculateAll()">
-            <input type="number" placeholder="New Tax" class="tax-new" value="${newVal}" step="any" oninput="calculateAll()">
-            <button class="btn btn-danger" onclick="removeTaxRow('${row.id}')">
-                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-            </button>
+            <input type="text" placeholder="e.g. YQ" class="tax-name" value="${name}" oninput="calculateAll()">
+            <input type="number" placeholder="0" class="tax-old" value="${oldVal}" step="any" oninput="calculateAll()">
+            <input type="number" placeholder="0" class="tax-new" value="${newVal}" step="any" oninput="calculateAll()">
+            <button class="btn btn-danger" onclick="removeTaxRow('${row.id}')">✕</button>
         `;
 
         container.appendChild(row);
         calculateAll();
     }
 
-    // Remove tax entry row
     function removeTaxRow(rowId) {
         const row = document.getElementById(rowId);
         if (row) {
@@ -526,7 +456,6 @@
         }
     }
 
-    // Main Calculation & Output Text Formatting
     function calculateAll() {
         const currency = document.getElementById('globalCurrency').value;
         const command = document.getElementById('globalCommand').value;
@@ -537,7 +466,7 @@
 
         const cards = document.querySelectorAll('.passenger-card');
         if (cards.length === 0) {
-            document.getElementById('outputBox').innerText = 'Please select at least 1 passenger.';
+            document.getElementById('outputBox').innerText = 'Please select at least 1 passenger above.';
             return;
         }
 
@@ -580,7 +509,6 @@
             const taxDiff = totalNewTax - totalOldTax;
             const singlePaxTotal = baseDiff + taxDiff + penaltyPerPax + feePerPax;
 
-            // Store single passenger data for multiplication in summary
             categoryTotals[type].count += 1;
             categoryTotals[type].singleBaseDiff = baseDiff;
             categoryTotals[type].singleTaxDiff = taxDiff;
@@ -597,7 +525,6 @@
             passengerBreakdowns.push(pStr);
         });
 
-        // Summary Text Output Setup
         let grandTotal = 0;
 
         let output = `========================================\n`;
@@ -633,7 +560,6 @@
         document.getElementById('outputBox').innerText = output;
     }
 
-    // Copy to clipboard
     function copyOutput() {
         const textToCopy = document.getElementById('outputBox').innerText;
         navigator.clipboard.writeText(textToCopy).then(() => {
@@ -643,7 +569,6 @@
         });
     }
 
-    // Reset fields
     function clearEverything() {
         document.getElementById('adultCount').value = '1';
         document.getElementById('childCount').value = '0';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Ticket Exchange Calculator</title>
+    <title>Error-Free Ticket Exchange Calculator</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -44,7 +44,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
-        /* Compact Header */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -64,6 +64,21 @@
             margin: 0;
             font-size: 0.75rem;
             color: var(--text-muted);
+        }
+
+        /* Error Alarm Banner */
+        .alarm-banner {
+            background-color: #450a0a;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
         }
 
         /* Compact Form Controls */
@@ -120,6 +135,12 @@
             border-color: var(--primary-color);
         }
 
+        /* Invalid field styling */
+        input.input-error {
+            border-color: #ef4444 !important;
+            background-color: #2a1215 !important;
+        }
+
         input[type="checkbox"] {
             width: 15px;
             height: 15px;
@@ -160,12 +181,12 @@
             padding-bottom: 4px;
         }
 
-        /* Taxes Layout with Headings */
+        /* Taxes Layout */
         .tax-header {
             display: flex;
             gap: 8px;
             margin-bottom: 4px;
-            padding-right: 28px; /* space for delete button offset */
+            padding-right: 28px;
         }
 
         .tax-header span {
@@ -234,7 +255,7 @@
             margin: 8px 0 4px 0;
         }
 
-        /* Terminal Display / Result Box */
+        /* Result Terminal */
         .result-box {
             margin-top: 10px;
             background-color: var(--terminal-bg);
@@ -258,15 +279,19 @@
 <body>
 
 <div class="container">
-    <!-- Compact Header -->
     <div class="header">
         <div>
             <h1>Ticket Exchange Calculator</h1>
-            <p>Flight Reissue Fare & Tax Calculation</p>
+            <p>Error-Free Fare & Fee Breakdown Desk</p>
         </div>
     </div>
 
-    <!-- Global Parameters -->
+    <!-- Alarm Box for Empty Input Fields -->
+    <div class="alarm-banner" id="alarmBox">
+        ⚠️ ALARM: Empty input fields detected! Complete highlighted fields to calculate.
+    </div>
+
+    <!-- Global Settings -->
     <div class="global-card">
         <div class="form-row">
             <div class="form-group">
@@ -332,22 +357,21 @@
         <div class="form-row">
             <div class="form-group hidden" id="penaltyContainer">
                 <label>Airline Penalty (Per Pax)</label>
-                <input type="number" id="globalPenalty" value="0" min="0" step="any" oninput="calculateAll()">
+                <input type="number" id="globalPenalty" class="req-input" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
             <div class="form-group hidden" id="feeContainer">
                 <label>Service Fee Value (Per Pax)</label>
-                <input type="number" id="globalServiceFee" value="0" min="0" step="any" oninput="calculateAll()">
+                <input type="number" id="globalServiceFee" class="req-input" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
         </div>
     </div>
 
-    <!-- Dynamic Passenger Container -->
+    <!-- Passenger Cards -->
     <div id="passengersContainer"></div>
 
-    <!-- Summary Display -->
+    <!-- Final Output -->
     <div class="result-box" id="outputBox">Terminal Ready...</div>
 
-    <!-- Actions -->
     <div class="action-buttons">
         <button class="btn" onclick="copyOutput()">Copy Summary</button>
         <button class="btn btn-danger" onclick="clearEverything()">Clear Everything</button>
@@ -404,16 +428,15 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Old Base Fare</label>
-                        <input type="number" class="p-old-base" value="0" min="0" step="any" oninput="calculateAll()">
+                        <input type="number" class="p-old-base req-input" value="0" min="0" step="any" oninput="calculateAll()">
                     </div>
                     <div class="form-group">
                         <label>New Base Fare</label>
-                        <input type="number" class="p-new-base" value="0" min="0" step="any" oninput="calculateAll()">
+                        <input type="number" class="p-new-base req-input" value="0" min="0" step="any" oninput="calculateAll()">
                     </div>
                 </div>
 
                 <div class="section-sub-title">Taxes Breakdown</div>
-                <!-- Tax Column Headers -->
                 <div class="tax-header">
                     <span>Tax Name</span>
                     <span>Old Tax</span>
@@ -438,9 +461,9 @@
         row.id = `tax-${rowId}`;
 
         row.innerHTML = `
-            <input type="text" placeholder="e.g. YQ" class="tax-name" value="${name}" oninput="calculateAll()">
-            <input type="number" placeholder="0" class="tax-old" value="${oldVal}" step="any" oninput="calculateAll()">
-            <input type="number" placeholder="0" class="tax-new" value="${newVal}" step="any" oninput="calculateAll()">
+            <input type="text" placeholder="e.g. YQ" class="tax-name req-input" value="${name}" oninput="calculateAll()">
+            <input type="number" placeholder="0" class="tax-old req-input" value="${oldVal}" step="any" oninput="calculateAll()">
+            <input type="number" placeholder="0" class="tax-new req-input" value="${newVal}" step="any" oninput="calculateAll()">
             <button class="btn btn-danger" onclick="removeTaxRow('${row.id}')">✕</button>
         `;
 
@@ -461,6 +484,30 @@
         const command = document.getElementById('globalCommand').value;
         const isFlex = document.getElementById('globalFlex').checked;
         const hasFee = document.getElementById('globalFeeCheck').checked;
+        
+        // --- Input Validation & Alarm ---
+        let hasError = false;
+        const inputsToValidate = document.querySelectorAll('.req-input');
+
+        inputsToValidate.forEach(input => {
+            // Check if element is visible and empty
+            if (input.offsetParent !== null && input.value.trim() === "") {
+                hasError = true;
+                input.classList.add('input-error');
+            } else {
+                input.classList.remove('input-error');
+            }
+        });
+
+        const alarmBox = document.getElementById('alarmBox');
+        if (hasError) {
+            alarmBox.style.display = 'flex';
+            document.getElementById('outputBox').innerText = "⚠️ CALCULATION PAUSED: Fill all missing inputs highlighted in red.";
+            return;
+        } else {
+            alarmBox.style.display = 'none';
+        }
+
         const penaltyPerPax = isFlex ? (parseFloat(document.getElementById('globalPenalty').value) || 0) : 0;
         const feePerPax = hasFee ? (parseFloat(document.getElementById('globalServiceFee').value) || 0) : 0;
 
@@ -471,9 +518,9 @@
         }
 
         let categoryTotals = {
-            Adult: { count: 0, singleBaseDiff: 0, singleTaxDiff: 0, singleTotal: 0 },
-            Child: { count: 0, singleBaseDiff: 0, singleTaxDiff: 0, singleTotal: 0 },
-            Infant: { count: 0, singleBaseDiff: 0, singleTaxDiff: 0, singleTotal: 0 }
+            Adult: { count: 0, singleAirline: 0, singleFee: 0 },
+            Child: { count: 0, singleAirline: 0, singleFee: 0 },
+            Infant: { count: 0, singleAirline: 0, singleFee: 0 }
         };
 
         let passengerBreakdowns = [];
@@ -507,25 +554,27 @@
             }
 
             const taxDiff = totalNewTax - totalOldTax;
-            const singlePaxTotal = baseDiff + taxDiff + penaltyPerPax + feePerPax;
+            const singleAirlineCost = baseDiff + taxDiff + penaltyPerPax;
+            const singleTotal = singleAirlineCost + feePerPax;
 
             categoryTotals[type].count += 1;
-            categoryTotals[type].singleBaseDiff = baseDiff;
-            categoryTotals[type].singleTaxDiff = taxDiff;
-            categoryTotals[type].singleTotal = singlePaxTotal;
+            categoryTotals[type].singleAirline = singleAirlineCost;
+            categoryTotals[type].singleFee = feePerPax;
 
             let pStr = `[${title}]\n`;
             pStr += `  Base Fare Diff : ${currency} ${baseDiff.toFixed(2)} (Old: ${oldBase.toFixed(2)}, New: ${newBase.toFixed(2)})\n`;
             pStr += `  Taxes Diff     : ${currency} ${taxDiff.toFixed(2)}\n`;
             if (taxDetails.length > 0) pStr += taxDetails.join('\n') + '\n';
             if (isFlex) pStr += `  Airline Penalty: ${currency} ${penaltyPerPax.toFixed(2)}\n`;
+            pStr += `  Airline Total  : ${currency} ${singleAirlineCost.toFixed(2)}\n`;
             if (hasFee) pStr += `  Service Fee    : ${currency} ${feePerPax.toFixed(2)}\n`;
-            pStr += `  Per Pax Total  : ${currency} ${singlePaxTotal.toFixed(2)}\n`;
+            pStr += `  Passenger Total: ${currency} ${singleTotal.toFixed(2)}\n`;
 
             passengerBreakdowns.push(pStr);
         });
 
-        let grandTotal = 0;
+        let totalAirlineCost = 0;
+        let totalServiceFees = 0;
 
         let output = `========================================\n`;
         output += `      TICKET EXCHANGE SUMMARY           \n`;
@@ -544,23 +593,39 @@
         ['Adult', 'Child', 'Infant'].forEach(cat => {
             const data = categoryTotals[cat];
             if (data.count > 0) {
-                const totalCategoryPrice = data.count * data.singleTotal;
-                grandTotal += totalCategoryPrice;
+                const catAirlineTotal = data.count * data.singleAirline;
+                const catFeeTotal = data.count * data.singleFee;
+                
+                totalAirlineCost += catAirlineTotal;
+                totalServiceFees += catFeeTotal;
 
                 output += `${data.count} x ${cat.toUpperCase()}(S):\n`;
-                output += `  Calculation: ${data.count} pax x ${currency} ${data.singleTotal.toFixed(2)} per pax\n`;
-                output += `  ${cat} Subtotal: ${currency} ${totalCategoryPrice.toFixed(2)}\n\n`;
+                output += `  - Airline Cost : ${data.count} pax x ${currency} ${data.singleAirline.toFixed(2)} = ${currency} ${catAirlineTotal.toFixed(2)}\n`;
+                if (hasFee) {
+                    output += `  - Service Fee  : ${data.count} pax x ${currency} ${data.singleFee.toFixed(2)} = ${currency} ${catFeeTotal.toFixed(2)}\n`;
+                }
+                output += `  - Subtotal     : ${currency} ${(catAirlineTotal + catFeeTotal).toFixed(2)}\n\n`;
             }
         });
 
         output += `========================================\n`;
-        output += `OVERALL GRAND TOTAL: ${currency} ${grandTotal.toFixed(2)}\n`;
+        output += `TOTAL AIRLINE COST : ${currency} ${totalAirlineCost.toFixed(2)}\n`;
+        if (hasFee) {
+            output += `TOTAL SERVICE FEE  : ${currency} ${totalServiceFees.toFixed(2)}\n`;
+        }
+        output += `----------------------------------------\n`;
+        output += `OVERALL GRAND TOTAL: ${currency} ${(totalAirlineCost + totalServiceFees).toFixed(2)}\n`;
         output += `========================================`;
 
         document.getElementById('outputBox').innerText = output;
     }
 
     function copyOutput() {
+        const alarmBox = document.getElementById('alarmBox');
+        if (alarmBox.style.display === 'flex') {
+            alert('Cannot copy summary! Complete required missing fields first.');
+            return;
+        }
         const textToCopy = document.getElementById('outputBox').innerText;
         navigator.clipboard.writeText(textToCopy).then(() => {
             alert('Summary copied to clipboard!');

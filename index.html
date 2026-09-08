@@ -44,7 +44,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -81,7 +80,6 @@
             gap: 8px;
         }
 
-        /* Compact Form Controls */
         .global-card {
             background-color: #111827;
             border: 1px solid var(--card-border);
@@ -135,7 +133,6 @@
             border-color: var(--primary-color);
         }
 
-        /* Invalid field styling */
         input.input-error {
             border-color: #ef4444 !important;
             background-color: #2a1215 !important;
@@ -159,11 +156,17 @@
             font-size: 0.8rem;
         }
 
+        .checkbox-column {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            justify-content: center;
+        }
+
         .hidden {
             display: none !important;
         }
 
-        /* Compact Passenger Cards */
         .passenger-card {
             background-color: #111827;
             border: 1px solid var(--card-border);
@@ -181,7 +184,6 @@
             padding-bottom: 4px;
         }
 
-        /* Taxes Layout */
         .tax-header {
             display: flex;
             gap: 8px;
@@ -208,7 +210,6 @@
             flex: 1;
         }
 
-        /* Buttons */
         .btn {
             background-color: var(--primary-color);
             color: white;
@@ -255,7 +256,6 @@
             margin: 8px 0 4px 0;
         }
 
-        /* Result Terminal */
         .result-box {
             margin-top: 10px;
             background-color: var(--terminal-bg);
@@ -281,17 +281,17 @@
 <div class="container">
     <div class="header">
         <div>
-            <h1>Manual Ticket Exchange Calculator</h1>
-            <p>Fare & Fee Breakdown</p>
+            <h1>Ticket Exchange Calculator</h1>
+            <p>Error-Free Fare & Fee Breakdown Desk</p>
         </div>
     </div>
 
-    <!-- Alarm Box for Empty Input Fields -->
+    <!-- Error Alarm Box -->
     <div class="alarm-banner" id="alarmBox">
-        ⚠️ ALARM: Empty input fields detected! Complete highlighted fields to calculate.
+        ⚠️ ALARM: Empty input fields detected! Fill highlighted fields to calculate.
     </div>
 
-    <!-- Global Settings -->
+    <!-- Global Controls -->
     <div class="global-card">
         <div class="form-row">
             <div class="form-group">
@@ -344,32 +344,39 @@
                 <label>Command / Remarks</label>
                 <input type="text" id="globalCommand" placeholder="Enter GDS command or notes..." oninput="calculateAll()">
             </div>
-            <div class="form-group" style="display:flex; align-items:flex-end; gap: 15px; padding-bottom: 2px;">
+            <div class="form-group checkbox-column">
                 <label class="checkbox-label">
                     <input type="checkbox" id="globalFlex" onchange="toggleFlex()"> Flexible Ticket?
                 </label>
                 <label class="checkbox-label">
                     <input type="checkbox" id="globalFeeCheck" onchange="toggleFee()"> Service Fee?
                 </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="globalNoShowCheck" onchange="toggleNoShow()"> No Show Penalty Applicable?
+                </label>
             </div>
         </div>
 
         <div class="form-row">
-            <div class="form-group hidden" id="penaltyContainer">
+            <div class="form-group" id="penaltyContainer">
                 <label>Airline Penalty (Per Pax)</label>
                 <input type="number" id="globalPenalty" class="req-input" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
             <div class="form-group hidden" id="feeContainer">
-                <label>Service Fee Value (Per Pax)</label>
+                <label>Service Fee (Per Pax)</label>
                 <input type="number" id="globalServiceFee" class="req-input" value="0" min="0" step="any" oninput="calculateAll()">
+            </div>
+            <div class="form-group hidden" id="noShowContainer">
+                <label>No Show Penalty (Per Pax)</label>
+                <input type="number" id="globalNoShowFee" class="req-input" value="0" min="0" step="any" oninput="calculateAll()">
             </div>
         </div>
     </div>
 
-    <!-- Passenger Cards -->
+    <!-- Passengers Container -->
     <div id="passengersContainer"></div>
 
-    <!-- Final Output -->
+    <!-- Output Box -->
     <div class="result-box" id="outputBox">Terminal Ready...</div>
 
     <div class="action-buttons">
@@ -379,14 +386,16 @@
 </div>
 
 <script>
+    // Flexible ticket checked = penalty DOES NOT apply (hidden)
+    // Flexible ticket unchecked = penalty DOES apply (visible)
     function toggleFlex() {
         const isFlex = document.getElementById('globalFlex').checked;
         const penaltyContainer = document.getElementById('penaltyContainer');
         if (isFlex) {
-            penaltyContainer.classList.remove('hidden');
-        } else {
             penaltyContainer.classList.add('hidden');
             document.getElementById('globalPenalty').value = 0;
+        } else {
+            penaltyContainer.classList.remove('hidden');
         }
         calculateAll();
     }
@@ -399,6 +408,18 @@
         } else {
             feeContainer.classList.add('hidden');
             document.getElementById('globalServiceFee').value = 0;
+        }
+        calculateAll();
+    }
+
+    function toggleNoShow() {
+        const hasNoShow = document.getElementById('globalNoShowCheck').checked;
+        const noShowContainer = document.getElementById('noShowContainer');
+        if (hasNoShow) {
+            noShowContainer.classList.remove('hidden');
+        } else {
+            noShowContainer.classList.add('hidden');
+            document.getElementById('globalNoShowFee').value = 0;
         }
         calculateAll();
     }
@@ -484,13 +505,13 @@
         const command = document.getElementById('globalCommand').value;
         const isFlex = document.getElementById('globalFlex').checked;
         const hasFee = document.getElementById('globalFeeCheck').checked;
+        const hasNoShow = document.getElementById('globalNoShowCheck').checked;
         
         // --- Input Validation & Alarm ---
         let hasError = false;
         const inputsToValidate = document.querySelectorAll('.req-input');
 
         inputsToValidate.forEach(input => {
-            // Check if element is visible and empty
             if (input.offsetParent !== null && input.value.trim() === "") {
                 hasError = true;
                 input.classList.add('input-error');
@@ -508,8 +529,10 @@
             alarmBox.style.display = 'none';
         }
 
-        const penaltyPerPax = isFlex ? (parseFloat(document.getElementById('globalPenalty').value) || 0) : 0;
+        // Penalty applies ONLY when Flexible is OFF
+        const penaltyPerPax = !isFlex ? (parseFloat(document.getElementById('globalPenalty').value) || 0) : 0;
         const feePerPax = hasFee ? (parseFloat(document.getElementById('globalServiceFee').value) || 0) : 0;
+        const noShowPerPax = hasNoShow ? (parseFloat(document.getElementById('globalNoShowFee').value) || 0) : 0;
 
         const cards = document.querySelectorAll('.passenger-card');
         if (cards.length === 0) {
@@ -554,7 +577,7 @@
             }
 
             const taxDiff = totalNewTax - totalOldTax;
-            const singleAirlineCost = baseDiff + taxDiff + penaltyPerPax;
+            const singleAirlineCost = baseDiff + taxDiff + penaltyPerPax + noShowPerPax;
             const singleTotal = singleAirlineCost + feePerPax;
 
             categoryTotals[type].count += 1;
@@ -565,7 +588,8 @@
             pStr += `  Base Fare Diff : ${currency} ${baseDiff.toFixed(2)} (Old: ${oldBase.toFixed(2)}, New: ${newBase.toFixed(2)})\n`;
             pStr += `  Taxes Diff     : ${currency} ${taxDiff.toFixed(2)}\n`;
             if (taxDetails.length > 0) pStr += taxDetails.join('\n') + '\n';
-            if (isFlex) pStr += `  Airline Penalty: ${currency} ${penaltyPerPax.toFixed(2)}\n`;
+            if (!isFlex) pStr += `  Airline Penalty: ${currency} ${penaltyPerPax.toFixed(2)}\n`;
+            if (hasNoShow) pStr += `  No Show Penalty: ${currency} ${noShowPerPax.toFixed(2)}\n`;
             pStr += `  Airline Total  : ${currency} ${singleAirlineCost.toFixed(2)}\n`;
             if (hasFee) pStr += `  Service Fee    : ${currency} ${feePerPax.toFixed(2)}\n`;
             pStr += `  Passenger Total: ${currency} ${singleTotal.toFixed(2)}\n`;
@@ -580,9 +604,11 @@
         output += `      TICKET EXCHANGE SUMMARY           \n`;
         output += `========================================\n`;
         output += `Currency         : ${currency}\n`;
-        if (command) output += `Command / Notes  : ${command}\n`;
-        if (isFlex)  output += `Airline Penalty  : ${currency} ${penaltyPerPax.toFixed(2)} / pax\n`;
-        if (hasFee)  output += `Service Fee      : ${currency} ${feePerPax.toFixed(2)} / pax\n`;
+        if (command)   output += `Command / Notes  : ${command}\n`;
+        if (isFlex)    output += `Flexible Ticket  : YES (Penalty Waived)\n`;
+        if (!isFlex)   output += `Airline Penalty  : ${currency} ${penaltyPerPax.toFixed(2)} / pax\n`;
+        if (hasNoShow) output += `No Show Penalty  : ${currency} ${noShowPerPax.toFixed(2)} / pax\n`;
+        if (hasFee)    output += `Service Fee      : ${currency} ${feePerPax.toFixed(2)} / pax\n`;
         output += `----------------------------------------\n\n`;
 
         output += passengerBreakdowns.join('\n') + `\n`;
@@ -643,9 +669,12 @@
         
         document.getElementById('globalFlex').checked = false;
         toggleFlex();
-        
+
         document.getElementById('globalFeeCheck').checked = false;
         toggleFee();
+
+        document.getElementById('globalNoShowCheck').checked = false;
+        toggleNoShow();
 
         renderPassengers();
     }
